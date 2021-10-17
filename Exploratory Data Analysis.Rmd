@@ -1,7 +1,7 @@
 ---
 title: "Exploratory Data Analysis"
-author: "Sana Rasheed"
-date: "October 20, 2020"
+author: "Syeda Sarah Mashhood"
+date: "October 16, 2021"
 output: html_document
 ---
 
@@ -28,11 +28,24 @@ head(airquality)
 
 ```{r }
 # START YOUR CODE FROM HERE
+summary(airquality)
 ```
 
 
 ```{r }
+hist(airquality$Temp, col = 'green' , main = 'Histogram of Temperature', xlab = 'Temperture' , ylab = 'Count')
 
+```
+
+```{r}
+hist(airquality$Wind, col = 'purple' , main = 'Distribution of Wind', xlab = 'Wind' , ylab = 'Count')
+plot(airquality$Day, airquality$Wind, col = 'blue' , main = 'Distribution of Wind', xlab = 'Day' , ylab = 'Wind')
+abline(h = median(airquality$Wind) , lwd = 2, lty = 5)
+boxplot(airquality$Wind, col = 'green' , main = 'Distribution of Wind')
+```
+
+```{r}
+plot(airquality$Solar.R, airquality$Ozone, col = 'red' , main = 'Relationship between Solar.R and Ozone', xlab = 'Solar.R' , ylab = 'Ozone', pch = 19)
 ```
 
 ### Good Job! You have completed this section!
@@ -56,18 +69,38 @@ library(lattice)
 library(ggplot2)
 
 head(state.x77)
-#head(state.region)
+head(state.region)
 ```
 
 ```{r }
 # START YOUR CODE FROM HERE
+state <- data.frame(state.x77,region = state.region)
+plot1 = xyplot(Illiteracy~Income,data = state,main= "Income Vs Illiteracy")
+qplot(Income,Illiteracy,data = state,main= "Income Vs Illiteracy")
+plot1
 ```
 
 
 ```{r }
-
+names(state)
 ```
 
+```{r}
+plot2 = xyplot(Life.Exp ~  Population  | region ,data = state,main= "Life Expectancy vs Population in different regions", layout = c(4,1) , col = 'brown', pch = 8)
+print(plot2)
+```
+
+```{r}
+pdf("plot1.pdf")
+print(plot1)
+dev.off()
+```
+
+```{r}
+pdf("plot2.pdf")
+print(plot2)
+dev.off()
+```
 
 ### Question 2
 **The dataset is loaded for you. Perform the following tasks:**
@@ -83,10 +116,30 @@ head(women)
 
 ```{r }
 # START YOUR CODE FROM HERE
+g <- ggplot(women, aes(height,weight) )
+plot3 <- g + geom_point(color = 'orange') + labs(x = 'Height' , y = 'Weight') + labs(title = 'Height vs Weight of Women')   
+print(plot3)
 ```
 
 ```{r }
+corr <- lm(weight~height,data = women)
+corr
+```
 
+```{r}
+plot4 <- plot3 + geom_smooth(method = 'lm' , se = FALSE, size = 1, linetype = 4) + theme_bw(base_family = "")+ theme(plot.title = element_text(hjust = 0.5))
+plot4
+```
+```{r}
+pdf("plot3.pdf")
+print(plot3)
+dev.off()
+```
+
+```{r}
+pdf("plot4.pdf")
+print(plot4)
+dev.off()
 ```
 
 ### Good Job! You have completed this section!
@@ -110,22 +163,33 @@ You need to use ggplot2 to accomplish this task.
 
 ```{r }
 head(longley)
+names(longley)
 
 ```
 
 ```{r }
 # START YOUR CODE FOR GRAPH-1
-
+graph1 <- ggplot(aes(Unemployed,GNP), data=longley)+geom_point()+ labs(title = "GNP Vs Unemployed")+ theme(plot.title = element_text(hjust = 0.5))
+graph1
 ```
 
-```{r }
+
+
+```{r}
 # START YOUR CODE fFOR GRAPH-2
+data <- gather(longley , key = "Employement_level" , value = "Employement", 3,7)
+head(data)
+ggplot(data, aes(Population,Employement) ) + geom_point(aes(color = (Employement_level == 'Unemployed'))) +  scale_color_manual(values = c( "green", "blue")) 
 
 ```
 
 ```{r }
 # START YOUR CODE FOR GRAPH-3
-
+Armed.Forces.Unemployed.Rel <- ifelse(longley$Armed.Forces > longley$Unemployed, "Y","N")
+Armed.Forces.Unemployed.Rel
+gg_plot <- ggplot(longley,aes(Unemployed,Armed.Forces))
+gg_plot + geom_point(aes(color = Armed.Forces.Unemployed.Rel),size = 2,alpha = 1/2, pch = 19)+
+labs(title = "Unemployed Vs Armed Forces")+ theme(plot.title = element_text(hjust = 0.5))
 ```
 
 
